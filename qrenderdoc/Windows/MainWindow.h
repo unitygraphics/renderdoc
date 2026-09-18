@@ -32,6 +32,7 @@
 #include <QTimer>
 #include <QUrl>
 #include "Code/Interface/QRDInterface.h"
+#include "Code/BatchExporter.h"
 #include "toolwindowmanager/ToolWindowManager.h"
 
 namespace Ui
@@ -89,7 +90,7 @@ public:
   // ICaptureViewer
   void OnCaptureLoaded() override;
   void OnCaptureClosed() override;
-  void OnSelectedEventChanged(uint32_t eventId) override {}
+  void OnSelectedEventChanged(uint32_t eventId) override;
   void OnEventChanged(uint32_t eventId) override;
 
   ToolWindowManager *mainToolManager();
@@ -188,6 +189,8 @@ private slots:
   void on_action_Send_Error_Report_triggered();
   void on_action_Check_for_Updates_triggered();
   void on_action_Clear_Reported_Bugs_triggered();
+  void on_action_ExportDrawCall_triggered();
+  void on_action_ExportAll_triggered();
 
   // manual slots
   void saveLayout_triggered();
@@ -242,6 +245,9 @@ private:
 
   Ui::MainWindow *ui;
   ICaptureContext &m_Ctx;
+
+  BatchExporter *m_BatchExporter = nullptr;
+  bool m_Exporting = false;
 
   QList<LiveCapture *> m_LiveCaptures;
 
