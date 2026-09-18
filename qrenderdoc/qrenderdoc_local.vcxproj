@@ -576,6 +576,7 @@
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="Code\BatchExporter.cpp" />
     <ClCompile Include="Code\BufferFormatter.cpp" />
     <ClCompile Include="Code\Interface\Analytics.cpp" />
     <ClCompile Include="Code\Interface\Helpers.cpp" />
