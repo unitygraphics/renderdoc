@@ -115,6 +115,8 @@ MainWindow::MainWindow(ICaptureContext &ctx) : QMainWindow(NULL), ui(new Ui::Mai
 {
   ui->setupUi(this);
 
+  m_BatchExporter = new BatchExporter(m_Ctx);
+
   setProperty("ICaptureContext", QVariant::fromValue((void *)&ctx));
 
 #if defined(Q_OS_WIN32)
@@ -1442,6 +1444,52 @@ void MainWindow::on_action_Clear_Reported_Bugs_triggered()
   m_Ctx.Config().Save();
 }
 
+void MainWindow::on_action_ExportDrawCall_triggered()
+{
+  if(m_Exporting || !m_Ctx.IsCaptureLoaded() || !m_Ctx.CurSelectedAction())
+    return;
+
+  m_Exporting = true;
+  ui->action_ExportDrawCall->setEnabled(false);
+  ui->action_ExportAll->setEnabled(false);
+
+  LambdaThread *th = new LambdaThread([this]() {
+    QString msg = m_BatchExporter->exportDrawCallResources();
+    GUIInvoke::call(this, [this, msg]() {
+      statusText->setText(msg);
+      m_Exporting = false;
+      ui->action_ExportDrawCall->setEnabled(m_Ctx.IsCaptureLoaded() &&
+                                            m_Ctx.CurSelectedAction() != nullptr);
+      ui->action_ExportAll->setEnabled(m_Ctx.IsCaptureLoaded());
+    });
+  });
+  th->selfDelete(true);
+  th->start();
+}
+
+void MainWindow::on_action_ExportAll_triggered()
+{
+  if(m_Exporting || !m_Ctx.IsCaptureLoaded())
+    return;
+
+  m_Exporting = true;
+  ui->action_ExportDrawCall->setEnabled(false);
+  ui->action_ExportAll->setEnabled(false);
+
+  LambdaThread *th = new LambdaThread([this]() {
+    QString msg = m_BatchExporter->exportAllResources();
+    GUIInvoke::call(this, [this, msg]() {
+      statusText->setText(msg);
+      m_Exporting = false;
+      ui->action_ExportDrawCall->setEnabled(m_Ctx.IsCaptureLoaded() &&
+                                            m_Ctx.CurSelectedAction() != nullptr);
+      ui->action_ExportAll->setEnabled(m_Ctx.IsCaptureLoaded());
+    });
+  });
+  th->selfDelete(true);
+  th->start();
+}
+
 void MainWindow::PopulateReportedBugs()
 {
   ui->menu_Reported_Bugs->clear();
@@ -2305,6 +2353,7 @@ void MainWindow::OnCaptureLoaded()
   ui->action_Save_Capture_As->setEnabled(true);
   ui->action_Close_Capture->setEnabled(true);
   ui->menu_Export_As->setEnabled(true);
+  ui->action_ExportAll->setEnabled(true);
 
   // don't allow changing context while capture is open
   contextChooser->setEnabled(false);
@@ -2378,6 +2427,8 @@ void MainWindow::OnCaptureClosed()
   ui->action_Save_Capture_As->setEnabled(false);
   ui->action_Close_Capture->setEnabled(false);
   ui->menu_Export_As->setEnabled(false);
+  ui->action_ExportDrawCall->setEnabled(false);
+  ui->action_ExportAll->setEnabled(false);
 
   ui->action_Start_Replay_Loop->setEnabled(false);
   ui->action_Open_RGP_Profile->setEnabled(false);
@@ -2409,6 +2460,13 @@ void MainWindow::OnCaptureClosed()
     if(m_Ctx.HasCaptureDialog())
       m_Ctx.GetCaptureDialog()->UpdateRemoteHost();
   }
+}
+
+void MainWindow::OnSelectedEventChanged(uint32_t eventId)
+{
+  if(!m_Exporting)
+    ui->action_ExportDrawCall->setEnabled(m_Ctx.IsCaptureLoaded() &&
+                                          m_Ctx.CurSelectedAction() != nullptr);
 }
 
 void MainWindow::OnEventChanged(uint32_t eventId)
