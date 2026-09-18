@@ -170,6 +170,13 @@
     <addaction name="separator"/>
     <addaction name="extension_dummy_Window"/>
    </widget>
+   <widget class="QMenu" name="menu_Export">
+    <property name="title">
+     <string>E&amp;xport</string>
+    </property>
+    <addaction name="action_ExportDrawCall"/>
+    <addaction name="action_ExportAll"/>
+   </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
      <string>&amp;Help</string>
@@ -198,9 +205,26 @@
    <addaction name="menu_File"/>
    <addaction name="menu_Window"/>
    <addaction name="menu_Tools"/>
+   <addaction name="menu_Export"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="action_ExportDrawCall">
+   <property name="text">
+    <string>Export DrawCall Resources</string>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_ExportAll">
+   <property name="text">
+    <string>Export All Resources</string>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+  </action>
   <action name="action_Launch_Application">
    <property name="text">
     <string>&amp;Launch Application</string>
