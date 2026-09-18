@@ -170,6 +170,7 @@ SOURCES += Code/qrenderdoc.cpp \
     Code/qprocessinfo.cpp \
     Code/ReplayManager.cpp \
     Code/CaptureContext.cpp \
+    Code/BatchExporter.cpp \
     Code/ScintillaSyntax.cpp \
     Code/QRDUtils.cpp \
     Code/MiniQtHelper.cpp \
@@ -259,6 +260,7 @@ SOURCES += Code/qrenderdoc.cpp \
     Windows/Dialogs/CameraControlsDialog.cpp \
     Windows/Dialogs/ProjectionGuessDialog.cpp
 HEADERS += Code/CaptureContext.h \
+    Code/BatchExporter.h \
     Code/qprocessinfo.h \
     Code/ReplayManager.h \
     Code/ScintillaSyntax.h \
